@@ -67,11 +67,11 @@ class TinysouPlugin {
 				$this->api_authorized = $this->client->authorized();
 			} catch( TinysouError $e ) {
 				$this->api_authorized = false;
-			} else {
+			} 
+		} else {
 				$this->api_authorized = false;
-			}
-
-			update_option( 'tinysou_api_authorized', $this->api_authorized );
 		}
+
+		update_option( 'tinysou_api_authorized', $this->api_authorized );
 	}
 }
