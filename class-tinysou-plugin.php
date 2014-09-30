@@ -96,6 +96,26 @@ class TinysouPlugin {
 				}
 			}
 		}
+
+		if ( current_user_can( 'edit_post' ) ) {
+			add_action( 'save_post', array( $this, 'handle_save_post' ), 99, 1);
+			add_action( 'transition_post_status', array( $this, 'handle_transition_post_status'), 99, 3 );
+			add_action( 'trashed_post', array( $this, 'delete_post') );
+
+			$this->initialize_api_client();
+			$this->check_api_authorized();
+			if( ! $this->api_authorized )
+				return;
+
+			$this->num_indexed_documents = get_option( 'tinysou_num_indexed_documents' );
+			$this->engine_slug = get_option( 'tinysou_engine_slug' );
+			$this->engine_name = get_option( 'tinysou_engine_name' );
+			$this->engine_key = get_option( 'tinysou_engine_key' );
+			$this->engine_initialized = get_option( 'tinysou_engine_intialized' );
+			$this->error = $this->check_engine_initialized();
+			if( ! $this->engine_initialized )
+				return;
+		}
 	}
 	/**
 	* Display an error message in the dashboard if there was an error in plugin
@@ -262,5 +282,118 @@ class TinysouPlugin {
 		header( "Content-Type: application/json" );
 		print( json_encode( array( 'total' => $total_posts ) ) );
 		die();
+	}
+
+	/**
+		* Sends a post to Tinysou for indexing as long as the status of the post is 'publish'
+		*
+		* @param int $post_id The ID of the post to be indexed.
+		*/
+
+	public function handle_save_post( $post_id ) {
+		$post = get_post( $posy_id );
+		if( "publish" == $post->post_status ) {
+			$this->index_post( $post_id );
+		}
+	}
+
+	public function index_post( $post_id ) {
+		$post = get_post( $post_id );
+		if( ! $this->should_index_post( $post ) ) {
+			return;
+		}
+
+		$document = $this->convert_post_to_document( $post );
+
+		try {
+			$this->client->create_or_update_document ( $this->engine_slug, $this->document_type_slug, $document );
+			$this->num_indexed_documents += 1;
+			update_option( 'tinysou_num_indexed_documents', $this->num_indexed_documents );
+		} catch( TinysouError $e) {
+			return;
+		}
+	}
+
+	/**
+		* Deletes a post from Tinysou's search index any time the post's status transitions from 'publish' to anything else.
+		*
+		* @param int $new_status The new status of the post
+		* @param int $old_status The old status of the post
+		* @param int $post The post
+		*/
+
+	public function handle_transition_post_status( $new_status, $old_status, $post ) {
+		if ( "publish" == $old_status && "publish" != $new_status ) {
+			$this->delete_post( $post->ID );
+		}
+	}
+
+	/**
+		* Sends a request to the Swiftype API remove a specific post from the server-side search engine.
+		*
+		* @param int $post_id The ID of the post to be deleted.
+		*/
+	public function delete_post( $post_id ){
+		try {
+			$this->client->delete_document( $this->engine_slug, $this->document_type_slug, $post_id );
+			$this->num_indexed_documents -= 1;
+			update_option( 'swiftype_num_indexed_documents', $this->num_indexed_documents );
+		} catch( SwiftypeError $e ) {
+			return;
+		}
+	}
+
+	/**
+		* Converts a post into an array that can be sent to the Swiftype API to be indexed in the server-side engine.
+		*
+		* @param object $somepost The post that is to be converted
+		* @return array An array representing the post that is suitable for sending to the Swiftype API
+		*/
+	private function convert_post_to_document( $somepost ) {
+		global $post;
+		$post = $somepost;
+
+		$nickname = get_the_author_meta( 'nickname', $post->post_author );
+		$first_name = get_the_author_meta( 'first_name', $post->post_author );
+		$last_name = get_the_author_meta( 'last_name', $post->post_author );
+		$name = $first_name . " " . $last_name;
+
+		$tags = get_the_tags( $post->ID );
+		$tag_strings = array();
+		if( is_array( $tags ) ) {
+			foreach( $tags as $tag ) {
+				$tag_strings[] = $tag->name;
+			}
+		}
+
+		$document = array();
+		$document['external_id'] = $post->ID;
+		$document['fields'] = array();
+		$document['fields'][] = array( 'name' => 'object_type', 'type' => 'enum', 'value' => $post->post_type );
+		$document['fields'][] = array( 'name' => 'url', 'type' => 'enum', 'value' => get_permalink( $post->ID ) );
+		$document['fields'][] = array( 'name' => 'timestamp', 'type' => 'date', 'value' => $post->post_date_gmt );
+		$document['fields'][] = array( 'name' => 'title', 'type' => 'string', 'value' => html_entity_decode( strip_tags( $post->post_title ), ENT_QUOTES, "UTF-8" ) );
+		$document['fields'][] = array( 'name' => 'body', 'type' => 'text', 'value' => html_entity_decode( strip_tags( $this->strip_shortcodes_retain_contents( $post->post_content ) ), ENT_QUOTES, "UTF-8" ) );
+		$document['fields'][] = array( 'name' => 'excerpt', 'type' => 'text', 'value' => html_entity_decode( strip_tags( $post->post_excerpt ), ENT_QUOTES, "UTF-8" ) );
+		$document['fields'][] = array( 'name' => 'author', 'type' => 'string', 'value' => array( $nickname, $name ) );
+		$document['fields'][] = array( 'name' => 'tags', 'type' => 'string', 'value' => $tag_strings );
+		$document['fields'][] = array( 'name' => 'category', 'type' => 'enum', 'value' => wp_get_post_categories( $post->ID ) );
+
+		$image = NULL;
+
+		if ( current_theme_supports( 'post-thumbnails' ) && has_post_thumbnail( $post->ID ) ) {
+			// NOTE: returns false on failure
+			$image = wp_get_attachment_url( get_post_thumbnail_id( $post->ID ) );
+		}
+
+		if ( $image ) {
+			$document['fields'][] = array( 'name' => 'image', 'type' => 'enum', 'value' => $image );
+		} else {
+			$document['fields'][] = array( 'name' => 'image', 'type' => 'enum', 'value' => NULL );
+		}
+
+		$document = apply_filters( "tinysou_document_builder", $document, $post );
+
+		return $document;
 	}
 }
