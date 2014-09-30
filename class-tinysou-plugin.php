@@ -36,8 +36,11 @@ class TinysouPlugin {
 
 		add_action( 'admin_menu', array( $this, 'tinysou_menu' ) );
 		add_action( 'admin_init', array( $this, 'initialize_admin_screen' ) );
+		add_action( 'future_to_publish', array( $this, 'handle_future_to_publish') );
 
 		if ( ! is_admin() ){
+			add_action( 'wp_enqueuie_scripts', array( $this, 'enqueue_tinysou_assets' ) );
+			//add_action( 'pre_get_posts', array( $this, '') );
 			$this->initialize_api_client();
 		}
 	}
@@ -396,4 +399,25 @@ class TinysouPlugin {
 
 		return $document;
 	}
+
+	/**
+		* Index a post when it transitions from the 'future' state to the 'publish' state
+		*
+		* @param int $post The post
+		*/
+	public function handle_future_to_publish( $post ) {
+		if( "publish" == $post->post_status ) {
+			$this->index_post( $post->ID );
+		}
+	}
+
+	public function enqueue_tinysou_assets() {
+		if( is_admin() ) {
+			return;
+		}
+		wp_enqueue_style( 'tinysou', plugins_url('assets/autocomplete.css', __FILE__ ) );
+		wp_enqueue_script( 'tinysou', plugins_url('assets/install_tinysou.min.js', __FILE__ ) );
+		wp_localize_script( 'tinysou', 'tinysouParams', array( 'engineKey' => $this->engine_key ) );
+	}
+
 }
