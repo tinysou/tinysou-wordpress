@@ -33,7 +33,6 @@ class TinysouPlugin {
 
 	public function __construct() {
 		$this->api_authorized = get_option( 'tinysou_api_authorized' );
-		//echo "dsds";
 
 		add_action( 'admin_menu', array( $this, 'tinysou_menu' ) );
 		add_action( 'admin_init', array( $this, 'initialize_admin_screen' ) );
@@ -71,7 +70,7 @@ class TinysouPlugin {
 		if( function_exists( 'is_main_query' ) && ! $wp_query->is_main_query() ) {
 			return;
 		}
-		if( is_serach() && ! is_admin() && $this->engine_slug && strlen( $this->engine_slug ) > 0) {
+		if( is_search() && ! is_admin() && $this->engine_slug && strlen( $this->engine_slug ) > 0) {
 			$query_string = apply_filters( 'tinysou_search_query_string', stripslashes( get_search_query(false) ) );
 			$page = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
 
@@ -127,7 +126,6 @@ class TinysouPlugin {
 
 
 	public function initialize_admin_screen() {
-
 		if ( current_user_can ('manage_options' ) ) {
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
 			add_action( 'admin_menu', array( $this, 'tinysou_menu') );
@@ -149,11 +147,11 @@ class TinysouPlugin {
 
 					case 'tinysou_create_engine':
 						$engine_name = sanitize_text_field( $_POST['engine_name'] );
-						update_option( 'tinysou-create-engine', $engine_name );
+						update_option( 'tinysou_create_engine', $engine_name );
 						break;
 					
 					case 'tinysou_clear_config':
-						$this -> chear_config();
+						$this -> clear_config();
 						break;
 
 					default:
@@ -198,9 +196,9 @@ class TinysouPlugin {
 	public function check_api_authorized(){
 		if( ! is_admin() )
 			return;
-		if( $this->api_authorized )
+		if( $this->api_authorized ){
 			return;
-
+		}
 		if( $this->api_key && strlen( $this->api_key ) > 0 ) {
 			try {
 				$this->api_authorized = $this->client->authorized();
@@ -225,21 +223,21 @@ class TinysouPlugin {
 
 		$engine_name = get_option( 'tinysou_create_engine' );
 
-		if( $engien_name == false ) {
+		if( $engine_name == false ) {
 			return;
 		}
 
 		try {
 			$this->initialize_engine( $engine_name );
 		} catch (TinysouError $e ) {
-			$error_message = json_encode( $e->getMessage() );
-			return "<b>引擎创建失败，微搜索服务器发生故障。</b>错误原因：". $error_message->error;
+			$error_message = json_decode( $e->getMessage() );
+			return "<b>Engine 创建失败，微搜索服务器发生故障。</b>错误原因：". $error_message->message;
 		}
 	}
 
 	public function initialize_engine( $engine_name ) {
 		$engine = $this->client->create_engine( array( 'name' => $engine_name ) );
-
+		
 		$this->engine_slug = $engine['slug'];
 		$this->engine_name = $engine['name'];
 		$this->engine_key = $engine['key'];

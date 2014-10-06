@@ -30,13 +30,41 @@ class TinysouClient {
 	}
 
 	public function authorized() {
-		$url = $this->endpoint . 'engines.json';
+		$url = $this->endpoint;
 		try {
 			$response = $this->call_api( 'GET', $url );
 			return( 200 == $response['code'] );
 		} catch( TinysouError $e) {
 			return false;
 		}
+	}
+
+	/**
+	* Create an engine
+	*
+	* @param array $params An array of engine parameters
+	* @return array The engine that was created
+	*/
+	public function create_engine( $params ) {
+		$engine = $params;//array( 'engine' => $params );
+		$url = $this->endpoint . "engines";
+		$response = $this->call_api( 'POST', $url, $engine );
+		
+		return json_decode( $response['body'], true );
+	}
+
+/**
+	* Create a document_type within an engine
+	*
+	* @param string $engine_id The engine_id of the engine in which to create the document_type
+	* @param string $document_type_name The name of the document_type to be created
+	* @return array An array representing the document_type that was created
+	*/
+	public function create_document_type( $engine_id, $document_type_name ) {
+		$params = array( 'document_type' => array( 'name' => $document_type_name ) );
+		$url = $this->endpoint . 'engines/' . $engine_id . '/document_types.json';
+		$response = $this->call_api( 'POST', $url, $params );
+		return json_decode( $response['body'], true );
 	}
 
 	private function call_api( $method, $url, $params = array() ) {
@@ -48,7 +76,8 @@ class TinysouClient {
 
 		$headers = array(
 			'User-Agent' => 'Tinysou Wordpress Plugin/' . TINYSOU_VERSION,
-			'Content-Type' => 'applocation/json'
+			'Content-Type' => 'applocation/json',
+			'Authorization:' => 'token ' . $this->api_key
 		);
 
 		$args = array(
