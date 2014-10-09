@@ -231,29 +231,30 @@ class TinysouPlugin {
 			$this->initialize_engine( $engine_name );
 		} catch (TinysouError $e ) {
 			$error_message = json_decode( $e->getMessage() );
-			return "<b>Engine 创建失败，微搜索服务器发生故障。</b>错误原因：". $error_message->message;
+			return "<b>Engine 配置失败，微搜索服务器发生故障。</b>错误原因：". $error_message->message;
 		}
 	}
 
 	public function initialize_engine( $engine_name ) {
 		$engine = $this->client->create_engine( array( 'name' => $engine_name ) );
-		
-		$this->engine_slug = $engine['slug'];
+		//print_r($engine);
+		//$this->engine_slug = $engine['slug'];
+		//print_r($engine);
 		$this->engine_name = $engine['name'];
 		$this->engine_key = $engine['key'];
 
-		$document_type = $this->client->create_document_type( $this->engine_slug, $this->document_type_slug);
-		
-		if( $document_type ) {
-			$this->engine_initialized = true;
-			$this->num_indexed_documents = $document_type['document_count'];
-		}
+		// $document_type = $this->client->create_document_type( $this->engine_slug, $this->document_type_slug);
+		$this->engine_initialized = true;
+		// if( $document_type ) {
+		// 	$this->engine_initialized = true;
+		// 	$this->num_indexed_documents = $document_type['document_count'];
+		// }
 
 		delete_option( 'tinysou_create_engine' );
 		update_option( 'tinysou_engine_name', $this->engine_name );
-		update_option( 'tinysou_engine_slug', $this->engine_slug );
+		// update_option( 'tinysou_engine_slug', $this->engine_slug );
 		update_option( 'tinysou_engine_key', $this->engine_key );
-		update_option( 'tinysou_num_indexed_documents', $this->num_indexed_documents );
+		// update_option( 'tinysou_num_indexed_documents', $this->num_indexed_documents );
 		update_option( 'tinysou_engine_initialized', $this->engine_initialized );
 	}
 
