@@ -67,7 +67,7 @@ class TinysouClient {
 	// }
 
 	public function create_collection( $engine_id, $collection_name ) {
-		$params = array( 'name' => $collection_name );
+		$params = array( 'name' => $collection_name , 'field_types' => array('title' => 'string'));
 		$url = $this->endpoint . 'engines/' . $engine_id . '/collections';
 		$response = $this->call_api( 'POST', $url, $params );
 		return json_decode( $response['body'], true );

@@ -10,7 +10,7 @@
 
 class TinysouPlugin {
 	private $client = NULL;
-	private $document_type_slug = 'posts';
+	private $collection_name = 'posts';
 
 	private $api_key = NULL;
 	private $engine_slug = NULL;
@@ -244,11 +244,14 @@ class TinysouPlugin {
 		$this->engine_key = $engine['key'];
 
 		// $document_type = $this->client->create_document_type( $this->engine_slug, $this->document_type_slug);
-		$this->engine_initialized = true;
-		// if( $document_type ) {
-		// 	$this->engine_initialized = true;
-		// 	$this->num_indexed_documents = $document_type['document_count'];
-		// }
+		// create a collection named posts
+		$collection = $this->client->create_collection( $this->engine_name, $this->collection_name );
+		//$this->engine_initialized = true;
+		if( $collection ) {
+			$this->engine_initialized = true;
+			//$this->num_indexed_documents = $document_type['document_count'];
+			print_r($collection);
+		}
 
 		delete_option( 'tinysou_create_engine' );
 		update_option( 'tinysou_engine_name', $this->engine_name );
@@ -265,7 +268,7 @@ class TinysouPlugin {
 		delete_option( 'tinysou_engine_slug' );
 		delete_option( 'tinysou_engine_name' );
 		delete_option( 'tinysou_engine_key' );
-		delete_option( 'tinysou_engine_intialized' );
+		delete_option( 'tinysou_engine_initialized' );
 		delete_option( 'tinysou_create_engine' );
 		delete_option( 'tinysou_num_indexed_documents' );
 	}

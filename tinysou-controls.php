@@ -25,7 +25,7 @@ $engine_name = get_option( 'tinysou_engine_name' );
 				<td><?php print( $engine_name ); ?></td>
 			</tr>
 			<tr>
-				<td>可搜索文件数:</td>
+				<td>可搜索文档数:</td>
 				<td><span id="num_indexed_documents"><?php print( $num_indexed_documents ); ?></span></td>
 			</tr>
 		</tbody>
