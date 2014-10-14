@@ -250,7 +250,7 @@ class TinysouPlugin {
 		if( $collection ) {
 			$this->engine_initialized = true;
 			//$this->num_indexed_documents = $document_type['document_count'];
-			print_r($collection);
+			//print_r($collection);
 		}
 
 		delete_option( 'tinysou_create_engine' );
@@ -302,26 +302,28 @@ class TinysouPlugin {
 	}
 
 	public function async_index_batch_of_posts() {
-		check_ajax_referer( 'tinysou-ajax-nonce' );
-		$offset = isset( $_POST['offset'] ) ? intval( $_POST['offset'] ) : 0;
-		$batch_size = isset( $_POST['batch_size'] ) ? intval( $_POST['batch_size'] ) : 10;
+		// /header("location: http://www.bibias.com"); 
+		//check_ajax_referer( 'tinysou-ajax-nonce' );
+		echo "sss";
+		// $offset = isset( $_POST['offset'] ) ? intval( $_POST['offset'] ) : 0;
+		// $batch_size = isset( $_POST['batch_size'] ) ? intval( $_POST['batch_size'] ) : 10;
 
-		try {
-			list( $num_written, $total_posts ) = $this->index_batch_of_posts( $offset, $batch_size );
+		// try {
+		// 	list( $num_written, $total_posts ) = $this->index_batch_of_posts( $offset, $batch_size );
 
-			header( 'Content-Type: application/json' );
-			print( json_encode( array( 'num_written' => $num_written, 'total' => $total_posts ) ) );
-			die();
+		// 	header( 'Content-Type: application/json' );
+		// 	print( json_encode( array( 'num_written' => $num_written, 'total' => $total_posts ) ) );
+		// 	die();
 
-		} catch ( SwiftypeError $e ) {
-			header( 'HTTP/1.1 500 Internal Server Error' );
-			print( "Error in Create or Update Documents. " );
-			print( "Offset: " . $offset . " " );
-			print( "Batch Size: " . $batch_size . " " );
-			print( "Retries: " . $retries . " " );
-			print_r( $e );
-			die();
-		}
+		// } catch ( TinysouError $e ) {
+		// 	header( 'HTTP/1.1 500 Internal Server Error' );
+		// 	print( "Error in Create or Update Documents. " );
+		// 	print( "Offset: " . $offset . " " );
+		// 	print( "Batch Size: " . $batch_size . " " );
+		// 	print( "Retries: " . $retries . " " );
+		// 	print_r( $e );
+		// 	die();
+		// }
 	}
 
 	public function index_batch_of_posts( $offset, $batch_size ) {

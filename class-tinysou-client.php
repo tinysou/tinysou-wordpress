@@ -59,15 +59,9 @@ class TinysouClient {
 	* @param string $document_type_name The name of the document_type to be created
 	* @return array An array representing the document_type that was created
 	*/
-	// public function create_document_type( $engine_id, $document_type_name ) {
-	// 	$params = array( 'document_type' => array( 'name' => $document_type_name ) );
-	// 	$url = $this->endpoint . 'engines/' . $engine_id . '/document_types.json';
-	// 	$response = $this->call_api( 'POST', $url, $params );
-	// 	return json_decode( $response['body'], true );
-	// }
 
 	public function create_collection( $engine_id, $collection_name ) {
-		$params = array( 'name' => $collection_name , 'field_types' => array('title' => 'string'));
+		$params = array( 'name' => $collection_name , 'field_types' => array('title' => 'string', 'content' => 'text', 'publish_date' => 'date'));
 		$url = $this->endpoint . 'engines/' . $engine_id . '/collections';
 		$response = $this->call_api( 'POST', $url, $params );
 		return json_decode( $response['body'], true );
