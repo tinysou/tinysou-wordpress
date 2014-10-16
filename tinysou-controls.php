@@ -20,9 +20,6 @@ foreach( $allowed_post_types as $type ) {
 		}
 	}
 }
-
-//echo $total_posts;
-
 ?>
 
 <div class="wrap">
@@ -61,7 +58,7 @@ foreach( $allowed_post_types as $type ) {
 	<?php //endif; ?>
 
 	<div id="synchronizing">
-		<a href="#" id="index_posts_button" class="gray-button">提交文章到微搜索服务器</a>
+		<a href="javascript:void(0);" id="index_posts_button" class="gray-button">提交文章到微搜索服务器</a>
 		<div class="tinysou" id="progress_bar" style="display: none;">
 			<div class="progress">
 				<div class="bar" style="display: none;"></div>
@@ -80,7 +77,7 @@ foreach( $allowed_post_types as $type ) {
 
 	<div id="synchronize_error" style="display: none; color: red;">
 		<b>提交文档出错</b><br/>
-		<b>请及时联系微搜索管理员！</b><br/>
+		<b>请检查你的网络，或者联系微搜索管理员!</b><br/>
 		<textarea id="error_text" style="width: 500px; height: 200px; margin-top: 20px;"></textarea>
 	</div>
 
@@ -98,10 +95,8 @@ foreach( $allowed_post_types as $type ) {
 </div>
 
 <script>
-
 	jQuery('#index_posts_button').click(function() {
 		index_batch_of_posts(0);
-		// /delete_batch_of_posts(0);
 	});
 
 	var batch_size = 15;
@@ -120,7 +115,7 @@ foreach( $allowed_post_types as $type ) {
 				dataType: 'text',
 				type: 'POST',
 				success: function(response, textStatus) {
-
+					console.log(response);
 					var increment = response['num_written'];
 					if (increment) {
 						total_posts_written += increment;
@@ -146,38 +141,38 @@ foreach( $allowed_post_types as $type ) {
 		);
 	};
 
-	var total_posts_in_trash_processed = 0;
-	var total_posts_in_trash = <?php print( $total_posts_in_trash ) ?>;
-	var delete_batch_of_posts = function(start) {
-		set_progress();
-		var offset = start || 0;
-		var data = { action: 'delete_batch_of_trashed_posts', offset: offset, batch_size: batch_size, _ajax_nonce: '<?php echo $nonce ?>' };
-		jQuery.ajax({
-				url: ajaxurl,
-				data: data,
-				dataType: 'json',
-				type: 'POST',
-				success: function(response, textStatus) {
-					console.log(response);
-					total_posts_in_trash_processed += batch_size;
-					if (response['total'] > 0) {
-						delete_batch_of_posts(offset + batch_size);
-					} else {
-						total_posts_in_trash_processed = total_posts_in_trash;
-						set_progress();
-					}
-				},
-				error: function(jqXHR, textStatus, errorThrown) {
-					try {
-						errorMsg = JSON.parse(jqXHR.responseText).message;
-					} catch (e) {
-						errorMsg = jqXHR.responseText;
-						show_error(errorMsg);
-					}
-				}
-			}
-		);
-	};
+	// var total_posts_in_trash_processed = 0;
+	// var total_posts_in_trash = <?php //print( $total_posts_in_trash ) ?>;
+	// var delete_batch_of_posts = function(start) {
+	// 	set_progress();
+	// 	var offset = start || 0;
+	// 	var data = { action: 'delete_batch_of_trashed_posts', offset: offset, batch_size: batch_size, _ajax_nonce: '<?php echo $nonce ?>' };
+	// 	jQuery.ajax({
+	// 			url: ajaxurl,
+	// 			data: data,
+	// 			dataType: 'json',
+	// 			type: 'POST',
+	// 			success: function(response, textStatus) {
+	// 				console.log(response);
+	// 				total_posts_in_trash_processed += batch_size;
+	// 				if (response['total'] > 0) {
+	// 					delete_batch_of_posts(offset + batch_size);
+	// 				} else {
+	// 					total_posts_in_trash_processed = total_posts_in_trash;
+	// 					set_progress();
+	// 				}
+	// 			},
+	// 			error: function(jqXHR, textStatus, errorThrown) {
+	// 				try {
+	// 					errorMsg = JSON.parse(jqXHR.responseText).message;
+	// 				} catch (e) {
+	// 					errorMsg = jqXHR.responseText;
+	// 					show_error(errorMsg);
+	// 				}
+	// 			}
+	// 		}
+	// 	);
+	// };
 
 	function refresh_num_indexed_documents() {
 		jQuery.ajax({
@@ -210,8 +205,10 @@ foreach( $allowed_post_types as $type ) {
 	}
 
 	function set_progress() {
-		var total_ops = total_posts + total_posts_in_trash;
-		var progress = total_posts_processed + total_posts_in_trash_processed;
+		var total_ops = total_posts;
+		var progress = total_posts_processed;
+		console.log(total_ops);
+		console.log(progress);
 		if(progress > total_ops) { progress = total_ops; }
 		var progress_width = Math.round(progress / total_ops * 245);
 		if(progress_width < 10) { progress_width = 10; }
@@ -222,11 +219,11 @@ foreach( $allowed_post_types as $type ) {
 		jQuery('#progress_bar').find('div.bar').show().width(progress_width);
 		if(progress >= total_ops) {
 			refresh_num_indexed_documents();
-			jQuery('#index_posts_button').html('Indexing Complete!');
+			jQuery('#index_posts_button').html('提交完成!');
 			jQuery('#progress_bar').fadeOut();
 			jQuery('#index_posts_button').unbind();
 		} else {
-			jQuery('#index_posts_button').html('Indexing progress... ' + Math.round(progress / total_ops * 100) + '%');
+			jQuery('#index_posts_button').html('正在提交... ' + Math.round(progress / total_ops * 100) + '%');
 		}
 	}
 

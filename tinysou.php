@@ -13,5 +13,6 @@ define('TINYSOU_VERSION','1.0.0');
 require_once 'class-tinysou-client.php';
 require_once 'class-tinysou-error.php';
 require_once 'class-tinysou-plugin.php';
+require_once 'class-tinysou-widget.php';
 
 $tinysou_plugin = new TinysouPlugin();
