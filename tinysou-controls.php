@@ -48,7 +48,7 @@ foreach( $allowed_post_types as $type ) {
 			</tr>
 			<!-- <tr>
 				<td>可搜索文档数:</td>
-				<td><span id="num_indexed_documents"><?php print( $num_indexed_documents ); ?></span></td>
+				<td><span id="num_indexed_documents"><?php //print( $num_indexed_documents ); ?></span></td>
 			</tr> -->
 		</tbody>
 	</table>
@@ -62,25 +62,25 @@ foreach( $allowed_post_types as $type ) {
 
 	<div id="synchronizing">
 		<a href="#" id="index_posts_button" class="gray-button">提交文章到微搜索服务器</a>
-		<div class="swiftype" id="progress_bar" style="display: none;">
+		<div class="tinysou" id="progress_bar" style="display: none;">
 			<div class="progress">
 				<div class="bar" style="display: none;"></div>
 			</div>
 		</div>
-		<?php if ( $num_indexed_documents > 0 ) : ?>
-			<p>
+		<?php //if ( $num_indexed_documents > 0 ) : ?>
+			<!-- <p>
 				<i>
 				Synchronizing your posts with Swiftype ensures that your search engine has indexed all the content you have published.<br/>
 				It shouldn't be necessary to synchronize posts regularly (the update process is automated after your initial setup), but<br/>
 				you may use this feature any time you suspect your search index is out of date.
 				</i>
-			</p>
-		<?php endif; ?>
+			</p> -->
+		<?php //endif; ?>
 	</div>
 
 	<div id="synchronize_error" style="display: none; color: red;">
-		<b>There was an error during synchronization.</b><br/>
-		If this problem persists, please email support@swiftype.com and include any error message shown in the text box below, as well as the information listed in the Swiftype Search Plugin Settings box above.</b><br/>
+		<b>提交文档出错</b><br/>
+		<b>请及时联系微搜索管理员！</b><br/>
 		<textarea id="error_text" style="width: 500px; height: 200px; margin-top: 20px;"></textarea>
 	</div>
 
@@ -101,7 +101,7 @@ foreach( $allowed_post_types as $type ) {
 
 	jQuery('#index_posts_button').click(function() {
 		index_batch_of_posts(0);
-		delete_batch_of_posts(0);
+		// /delete_batch_of_posts(0);
 	});
 
 	var batch_size = 15;
@@ -109,17 +109,18 @@ foreach( $allowed_post_types as $type ) {
 	var total_posts_written = 0;
 	var total_posts_processed = 0;
 	var total_posts = <?php print( $total_posts ) ?>;
+
 	var index_batch_of_posts = function(start) {
 		set_progress();
 		var offset = start || 0;
-		var data = { action: 'index_batch_of_posts', offset: offset, batch_size: batch_size, _ajax_nonce: '<?php echo $nonce ?>' };
+		var data = { action: 'sync_posts', offset: offset, batch_size: batch_size, _ajax_nonce: '<?php echo $nonce ?>' };
 		jQuery.ajax({
 				url: ajaxurl,
 				data: data,
 				dataType: 'text',
 				type: 'POST',
 				success: function(response, textStatus) {
-					//here
+
 					var increment = response['num_written'];
 					if (increment) {
 						total_posts_written += increment;
@@ -133,7 +134,7 @@ foreach( $allowed_post_types as $type ) {
 					}
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
-					//console.log(errorThrown);
+					console.log(errorThrown);
 					try {
 						errorMsg = JSON.parse(jqXHR.responseText).message;
 					} catch (e) {
@@ -157,6 +158,7 @@ foreach( $allowed_post_types as $type ) {
 				dataType: 'json',
 				type: 'POST',
 				success: function(response, textStatus) {
+					console.log(response);
 					total_posts_in_trash_processed += batch_size;
 					if (response['total'] > 0) {
 						delete_batch_of_posts(offset + batch_size);

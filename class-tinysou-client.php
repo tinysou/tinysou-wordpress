@@ -61,9 +61,33 @@ class TinysouClient {
 	*/
 
 	public function create_collection( $engine_id, $collection_name ) {
-		$params = array( 'name' => $collection_name , 'field_types' => array('title' => 'string', 'content' => 'text', 'publish_date' => 'date'));
+		$field_types = array(
+			'title' => 'string', 
+			'content' => 'text', 
+			'publish_date' => 'date'
+		);
+
+		$params = array( 'name' => $collection_name , 'field_types' => $field_types);
 		$url = $this->endpoint . 'engines/' . $engine_id . '/collections';
 		$response = $this->call_api( 'POST', $url, $params );
+		return json_decode( $response['body'], true );
+	}
+
+	public function create_or_update_documents( $engine_name, $collection_name, $document ) {
+		$url = $this->endpoint . 'engines/' . $engine_name . '/collections/' . $collection_name . '/documents/'.md5('posts_'.$document['id']);
+		error_log($url);
+		$response = $this->call_api( 'PUT', $url, $document );
+		error_log($response['code']);
+		return json_decode( $response['body'], true );
+	}
+
+	public function delete_documents( $engine_name, $collection_name, $document_id) {
+		//$params = array( 'documents' => $document_ids );
+		// foreach ($document_ids as $key => $value) {
+		// 	# code...
+		// }
+		$url = $this->endpoint . 'engines/' . $engine_name . '/collections/' . $collection_name . '/documents/'.$document_id;
+		$response = $this->call_api( 'DELETE', $url );
 		return json_decode( $response['body'], true );
 	}
 
@@ -94,12 +118,13 @@ class TinysouClient {
 			$url .= '?' . $this -> serialize_params( $params );
 			$args['method'] = $method;
 			$args['body'] = array();
-		} else if( $method == 'POST' ) {
+		} else if( 'POST' == $method || 'PUT' == $method ) {
 			$args['method'] = $method;
 			$args['body'] = json_encode( $params );
-		}
+		} 
 
 		$response = wp_remote_request( $url, $args );
+		error_log(wp_remote_retrieve_response_code( $response ));
 
 		if( ! is_wp_error( $response ) ) {
 			$response_code = wp_remote_retrieve_response_code( $response );
@@ -109,6 +134,7 @@ class TinysouClient {
 				return array( 'code' => $response_code, 'body' => $response_body );
 			} elseif( !empty( $response_message) ) {
 				$response_body = wp_remote_retrieve_body( $response );
+				//error_log($response_body);
 				throw new TinysouError( $response_body, $response_code );
 			} else {
 				throw new TinysouError( 'Unknown Error', $response_code );
