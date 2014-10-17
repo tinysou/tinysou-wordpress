@@ -85,8 +85,11 @@ class TinysouClient {
 		return json_decode( $response['body'], true );
 	}
 
-	public function search() {
-		
+	public function search($engine_name, $collection_name, $query, $params = array()) {
+		$params = array_merge( array( 'q' => $query, 'page' => 1), $params);
+		$url = $this->endpoint . 'engines/' . $engine_name . '/collections/' . $collection_name . '/search';
+		$response = $this->call_api( 'GET', $url, $params );
+		return json_decode( $response['body'], true );
 	}
 
 	private function call_api( $method, $url, $params = array() ) {
