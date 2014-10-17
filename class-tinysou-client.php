@@ -26,9 +26,6 @@ class TinysouClient {
 		$this->api_key = $api_key;
 	}
 
-	public function get_engines() {
-	}
-
 	public function authorized() {
 		$url = $this->endpoint;
 		try {
@@ -74,6 +71,7 @@ class TinysouClient {
 	}
 
 	public function create_or_update_documents( $engine_name, $collection_name, $document ) {
+		error_log($document['id']);
 		$url = $this->endpoint . 'engines/' . $engine_name . '/collections/' . $collection_name . '/documents/'.md5('posts_'.$document['id']);
 		$response = $this->call_api( 'PUT', $url, $document );
 		return json_decode( $response['body'], true );
@@ -89,6 +87,12 @@ class TinysouClient {
 		$params = array_merge( array( 'q' => $query, 'page' => 1), $params);
 		$url = $this->endpoint . 'engines/' . $engine_name . '/collections/' . $collection_name . '/search';
 		$response = $this->call_api( 'GET', $url, $params );
+		return json_decode( $response['body'], true );
+	}
+
+	public function get_searchable_post_num( $engine_name ) {
+		$url = $this->endpoint . 'engines/' .$engine_name;
+		$response = $this -> call_api( 'GET', $url );
 		return json_decode( $response['body'], true );
 	}
 

@@ -2,6 +2,9 @@
 $nonce = wp_create_nonce( 'tinysou-ajax-nonce' );
 $api_key = get_option( 'tinysou_api_key' );
 $engine_name = get_option( 'tinysou_engine_name' );
+$tinysou_seaechable_num = get_option( 'tinysou_searchable_num' );
+$count_posts = wp_count_posts();
+$published_posts = $count_posts->publish;
 
 $allowed_post_types = array( 'post', 'page' );
 if ( function_exists( 'get_post_types' ) ) {
@@ -42,6 +45,14 @@ foreach( $allowed_post_types as $type ) {
 			<tr>
 				<td>Engine名称:</td>
 				<td><?php print( $engine_name ); ?></td>
+			</tr>
+			<tr>
+				<td>已发布文章数目:</td>
+				<td><?php print( $published_posts ); ?></td>
+			</tr>
+			<tr>
+				<td>已提交文章数目:</td>
+				<td><?php print( $tinysou_seaechable_num ); ?></td>
 			</tr>
 			<!-- <tr>
 				<td>可搜索文档数:</td>
@@ -129,7 +140,7 @@ foreach( $allowed_post_types as $type ) {
 					}
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
-					console.log(errorThrown);
+					//console.log(errorThrown);
 					try {
 						errorMsg = JSON.parse(jqXHR.responseText).message;
 					} catch (e) {
@@ -207,8 +218,8 @@ foreach( $allowed_post_types as $type ) {
 	function set_progress() {
 		var total_ops = total_posts;
 		var progress = total_posts_processed;
-		console.log(total_ops);
-		console.log(progress);
+		// console.log(total_ops);
+		// console.log(progress);
 		if(progress > total_ops) { progress = total_ops; }
 		var progress_width = Math.round(progress / total_ops * 245);
 		if(progress_width < 10) { progress_width = 10; }

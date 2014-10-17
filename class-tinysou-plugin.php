@@ -106,6 +106,9 @@ class TinysouPlugin {
 
 			$this->initialize_api_client();
 			$this->check_api_authorized();
+			
+			update_option( 'tinysou_searchable_num', $this->get_tinysou_posts_num() );
+
 			if( ! $this->api_authorized )
 				return;
 
@@ -255,6 +258,7 @@ class TinysouPlugin {
 		delete_option( 'tinysou_engine_name' );
 		delete_option( 'tinysou_engine_key' );
 		delete_option( 'tinysou_engine_initialized' );
+		delete_option( 'tinysou_searchable_num' );
 		delete_option( 'tinysou_create_engine' );
 	}
 
@@ -283,6 +287,8 @@ class TinysouPlugin {
 
 	public function send_posts_to_tinysou() {
 		$posts_query = array(
+			'numberposts' => 100,
+			'offset' => 20,
 			'orderby' => 'id',
 			'order' => 'ASC',
 			'post_status' => 'publish',
@@ -290,18 +296,20 @@ class TinysouPlugin {
 		);
 		$posts = get_posts( $posts_query );
 		$total_posts = count( $posts );
-		$retries = 0;
-		$resp = NULL;
-		$num_written = 0;
 	
 		if( $total_posts > 0 ) {
 			foreach( $posts as $post ) {
 				if( $this->should_index_post( $post ) ) {
+					$retries = 0;
+					$resp = NULL;
+					$num_written = 0;
+
 					$document = $this->convert_post_to_document( $post );
+					// error_log($document['title']);
 					while( is_null( $resp ) ) {
 						try {
 							$resp = $this->client->create_or_update_documents( $this->engine_name, $this->collection_name, $document );
-						} catch( SwiftypeError $e ) {
+						} catch( TinysouError $e ) {
 							if( $retries >= $this->max_retries ) {
 								throw $e;
 							} else {
@@ -310,13 +318,22 @@ class TinysouPlugin {
 							}
 						}
 					}
-					if($resp){
-						$num_written += 1;
-					}
+					// if($resp){
+					// 	$num_written += 1;
+					// }
 				}
 			}
 		}
-		return array( $num_written, $total_posts );
+		return array( $total_posts );
+	}
+
+	public function get_tinysou_posts_num() {
+		try{
+			$resp = $this->client->get_searchable_post_num($this->engine_name);
+			return $resp['doc_count'];
+		} catch( TinysouError $e ) {
+			throw $e;
+		}
 	}
 
 	private function convert_post_to_document( $somepost ) {
