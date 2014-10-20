@@ -36,6 +36,7 @@ class TinysouPlugin {
 
 		add_action( 'admin_menu', array( $this, 'tinysou_menu' ) );
 		add_action( 'admin_init', array( $this, 'initialize_admin_screen' ) );
+		add_action( 'publish_post', array( $this, 'sync_single_post' ));
 
 		if ( ! is_admin() ){
 			add_action( 'wp_enqueuie_scripts', array( $this, 'enqueue_tinysou_assets' ) );
@@ -171,7 +172,6 @@ class TinysouPlugin {
 
 			add_filter( 'post_class', array( $this, 'tinysou_post_class' ) );
 		}
-
 	}
 
 	public function tinysou_post_class( $classes ) {
@@ -285,10 +285,29 @@ class TinysouPlugin {
 		}
 	}
 
+	public function sync_single_post($post_ID) {
+		$post = get_post( $post_ID );
+		$document = $this->convert_post_to_document( $post );
+		while( is_null( $resp ) ) {
+			try {
+				$resp = $this->client->create_or_update_documents( $this->engine_name, $this->collection_name, $document );
+			} catch( TinysouError $e ) {
+				if( $retries >= $this->max_retries ) {
+					throw $e;
+				} else {
+					$retries++;
+					sleep( $this->retry_delay );
+				}
+			}
+		}
+	}
+
 	public function send_posts_to_tinysou() {
+		$count_posts = wp_count_posts();
+		$published_posts = $count_posts->publish;
 		$posts_query = array(
-			'numberposts' => 100,
-			'offset' => 20,
+			'numberposts' => $published_posts,
+			'offset' => 0,
 			'orderby' => 'id',
 			'order' => 'ASC',
 			'post_status' => 'publish',

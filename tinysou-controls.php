@@ -54,36 +54,17 @@ foreach( $allowed_post_types as $type ) {
 				<td>已提交文章数目:</td>
 				<td><?php print( $tinysou_seaechable_num ); ?></td>
 			</tr>
-			<!-- <tr>
-				<td>可搜索文档数:</td>
-				<td><span id="num_indexed_documents"><?php //print( $num_indexed_documents ); ?></span></td>
-			</tr> -->
 		</tbody>
 	</table>
 	<br/>
 
-	<?php //if ( $num_indexed_documents == 0 ) : ?>
-		<!-- <p>
-			<b>提示信息:</b> 目前可搜索文章数为零，请先点击下面的按钮把文章提交到微搜索服务器！
-		</p> -->
-	<?php //endif; ?>
-
 	<div id="synchronizing">
-		<a href="javascript:void(0);" id="index_posts_button" class="gray-button">提交文章到微搜索服务器</a>
+		<a href="javascript:void(0);" id="index_posts_button" class="gray-button">提交文章到微搜索服务器,此操作耗时较长，请耐心等待。</a>
 		<div class="tinysou" id="progress_bar" style="display: none;">
 			<div class="progress">
 				<div class="bar" style="display: none;"></div>
 			</div>
 		</div>
-		<?php //if ( $num_indexed_documents > 0 ) : ?>
-			<!-- <p>
-				<i>
-				Synchronizing your posts with Swiftype ensures that your search engine has indexed all the content you have published.<br/>
-				It shouldn't be necessary to synchronize posts regularly (the update process is automated after your initial setup), but<br/>
-				you may use this feature any time you suspect your search index is out of date.
-				</i>
-			</p> -->
-		<?php //endif; ?>
 	</div>
 
 	<div id="synchronize_error" style="display: none; color: red;">
@@ -152,39 +133,6 @@ foreach( $allowed_post_types as $type ) {
 		);
 	};
 
-	// var total_posts_in_trash_processed = 0;
-	// var total_posts_in_trash = <?php //print( $total_posts_in_trash ) ?>;
-	// var delete_batch_of_posts = function(start) {
-	// 	set_progress();
-	// 	var offset = start || 0;
-	// 	var data = { action: 'delete_batch_of_trashed_posts', offset: offset, batch_size: batch_size, _ajax_nonce: '<?php echo $nonce ?>' };
-	// 	jQuery.ajax({
-	// 			url: ajaxurl,
-	// 			data: data,
-	// 			dataType: 'json',
-	// 			type: 'POST',
-	// 			success: function(response, textStatus) {
-	// 				console.log(response);
-	// 				total_posts_in_trash_processed += batch_size;
-	// 				if (response['total'] > 0) {
-	// 					delete_batch_of_posts(offset + batch_size);
-	// 				} else {
-	// 					total_posts_in_trash_processed = total_posts_in_trash;
-	// 					set_progress();
-	// 				}
-	// 			},
-	// 			error: function(jqXHR, textStatus, errorThrown) {
-	// 				try {
-	// 					errorMsg = JSON.parse(jqXHR.responseText).message;
-	// 				} catch (e) {
-	// 					errorMsg = jqXHR.responseText;
-	// 					show_error(errorMsg);
-	// 				}
-	// 			}
-	// 		}
-	// 	);
-	// };
-
 	function refresh_num_indexed_documents() {
 		jQuery.ajax({
 				url: ajaxurl,
@@ -234,7 +182,7 @@ foreach( $allowed_post_types as $type ) {
 			jQuery('#progress_bar').fadeOut();
 			jQuery('#index_posts_button').unbind();
 		} else {
-			jQuery('#index_posts_button').html('正在提交... ' + Math.round(progress / total_ops * 100) + '%');
+			jQuery('#index_posts_button').html('正在提交... ');
 		}
 	}
 
