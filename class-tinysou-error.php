@@ -3,7 +3,7 @@
 /**
 	* The TinysouError Exception class
 	*
-	* An instance of this class is thrown any time the Swiftype Client encounters an error
+	* An instance of this class is thrown any time the Tinysou Client encounters an error
 	* making calls to the remote service.
 	*
 	* @author  Tairy <tairyguo@gmail.com>

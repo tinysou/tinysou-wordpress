@@ -1,9 +1,9 @@
-h2.swiftype-header {
-	background: transparent url(swiftype_logo.jpg) no-repeat 0 7px;
+h2.tinysou-header {
+	background: transparent url(tinysou_logo.jpg) no-repeat 0 7px;
 	padding-left: 35px;
 }
 
-.swiftype .progress .bar {
+.tinysou .progress .bar {
 	-webkit-border-radius: 7px;
 	-moz-border-radius: 7px;
 	border-radius: 7px;
@@ -19,7 +19,7 @@ h2.swiftype-header {
 	-webkit-box-shadow: inset 0px 1px 0px #00dbfc;
 }
 
-.swiftype .progress {
+.tinysou .progress {
 	margin-top: 10px;
 	-webkit-border-radius: 7px;
 	-moz-border-radius: 7px;
