@@ -9,9 +9,11 @@ Tinysou Wordpress Plugin
 
 1. Download the plugin
 
+```
     $ wget https://github.com/tinysou/tinysou-wordpress/archive/master.zip
     $ unzip tinysou-wordpress-master.zip
     $ mv tinysou-wordpress-master web-root-path/wordpress/wp-content/plugin/
+```
 
 2. View your wordpress website, Login in as admin user.
 3. Input your tinysou api key.
