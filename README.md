@@ -7,7 +7,7 @@ Tinysou Wordpress Plugin
 
 ## Installation
 
-1.Go to [http://tinysou.com/](http://tinysou.com/) and sign up for a free Swiftype account. (Be sure to validate your account via the confirmation email we send.)
+1. Go to [http://tinysou.com/](http://tinysou.com/) and sign up for a free Swiftype account. (Be sure to validate your account via the confirmation email we send.)
 
 2. After logging in to Tinysou, go to the Account Settings screen and get your API key.
 
