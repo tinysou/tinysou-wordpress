@@ -1,30 +1,20 @@
 tinysou-wordpress
 =================
 
-[![Build Status](https://travis-ci.org/tinysou/tinysou-wordpress.svg?branch=master)](https://travis-ci.org/tinysou/tinysou-wordpress)
-
 Tinysou Wordpress Plugin
 
-## Installation
+## 安装
 
-1. Go to [http://tinysou.com/](http://tinysou.com/) and sign up for a free Swiftype account. (Be sure to validate your account via the confirmation email we send.)
+1. 免费注册[Tinysou](http://tinysou.com/)账号.
 
-2. After logging in to Tinysou, go to the Account Settings screen and get your API key.
+2. 登录Tinysou,获取api key. 
 
-3. Install the Tinysou Search Wordpress plugin in your Wordpress dashboard.
+3. 安装wordpress-tinysou插件.
 
-4. Activate the plugin through the 'Plugins' menu in WordPress.
+4. 在插件管理中激活Tinysou插件. 
 
-5. Go to the Swiftype Search plugin page and enter your Swiftype API key on the first screen.
+5. 在Tinysou插件配置页面 输入你的api key.
 
-6. Name your search engine, following the instructions on the screen.
+6. 在创建engine页面输入engine name. 
 
-7. Build your search documents by clicking the "提交..." button.
-
-## Contributing
-
-1. Fork it ( https://github.com/tinysou/tinysou-wordpress/fork )
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
+7. 点击`提交`按钮,将文章提交至tinysou服务器即可.
