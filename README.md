@@ -7,19 +7,13 @@ Tinysou Wordpress Plugin
 
 ## Installation
 
-1. Download the plugin
-
-```
-    $ wget https://github.com/tinysou/tinysou-wordpress/archive/master.zip
-    $ unzip tinysou-wordpress-master.zip
-    $ mv tinysou-wordpress-master web-root-path/wordpress/wp-content/plugin/
-```
-
-2. View your wordpress website, Login in as admin user.
-3. Input your tinysou api key.
-4. Input your engine name to create an engine.
-5. Sync your posts to tinysou server.
-
+1.Go to [http://tinysou.com/](http://tinysou.com/) and sign up for a free Swiftype account. (Be sure to validate your account via the confirmation email we send.)
+2. After logging in to Tinysou, go to the Account Settings screen and get your API key.
+3. Install the Tinysou Search Wordpress plugin in your Wordpress dashboard.
+4. Activate the plugin through the 'Plugins' menu in WordPress.
+5. Go to the Swiftype Search plugin page and enter your Swiftype API key on the first screen.
+6. Name your search engine, following the instructions on the screen.
+7. Build your search documents by clicking the "提交..." button.
 ## Contributing
 
 1. Fork it ( https://github.com/tinysou/tinysou-python/fork )
