@@ -101,21 +101,22 @@ class TinysouPlugin {
 		}
 
 		if ( current_user_can( 'edit_post', '' ) ) {
-
 			$this->initialize_api_client();
 			$this->check_api_authorized();
 			
-
 			if( ! $this->api_authorized )
 				return;
 
 			$this->engine_name = get_option( 'tinysou_engine_name' );
 			$this->engine_key = get_option( 'tinysou_engine_key' );
-			$this->engine_initialized = get_option( 'tinysou_engine_intialized' );
+			$this->engine_initialized = get_option( 'tinysou_engine_initialized' );
 			$this->error = $this->check_engine_initialized();
+			if(!empty($this->engine_name)){
+				update_option( 'tinysou_searchable_num', $this->get_tinysou_posts_num() );
+			}
 			if( ! $this->engine_initialized )
 				return;
-			update_option( 'tinysou_searchable_num', $this->get_tinysou_posts_num() );
+
 		}
 	}
 
@@ -124,7 +125,7 @@ class TinysouPlugin {
 		if( function_exists( 'is_main_query' ) && ! $wp_query->is_main_query() ) {
 			return;
 		}
-		error_log($this->engine_name);
+
 		if( is_search() && ! is_admin() && $this->engine_name && strlen( $this->engine_name ) > 0) {
 			$query_string = apply_filters( 'tinysou_search_query_string', stripslashes( get_search_query( false ) ) );
 			$page = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
@@ -218,14 +219,14 @@ class TinysouPlugin {
 			return;
 
 		$engine_name = get_option( 'tinysou_create_engine' );
-
 		if( $engine_name == false ) {
 			return;
 		}
 
 		try {
 			$this->initialize_engine( $engine_name );
-			update_option('tinysou_engine_intialized',true);
+			update_option('tinysou_engine_initialized',true);
+			// update_option( 'tinysou_searchable_num', $this->get_tinysou_posts_num() );
 		} catch (TinysouError $e ) {
 			$error_message = json_decode( $e->getMessage() );
 			return "<b>Engine 配置失败，微搜索服务器发生故障。</b>错误原因：". $error_message->message;

@@ -43,8 +43,7 @@ class TinysouClient {
 	* @return array The engine that was created
 	*/
 	public function create_engine( $params ) {
-
-		$engine = $params;//array( 'engine' => $params );
+		$engine = $params;
 		$url = $this->endpoint . "engines";
 		$response = $this->call_api( 'POST', $url, $engine );
 		return json_decode( $response['body'], true );

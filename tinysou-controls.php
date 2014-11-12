@@ -107,7 +107,6 @@ foreach( $allowed_post_types as $type ) {
 				dataType: 'text',
 				type: 'POST',
 				success: function(response, textStatus) {
-					console.log(response);
 					var increment = response['num_written'];
 					if (increment) {
 						total_posts_written += increment;
