@@ -100,7 +100,6 @@ class TinysouPlugin {
 			}
 		}
 
-
 		if ( current_user_can( 'edit_post', '' ) ) {
 
 			$this->initialize_api_client();
