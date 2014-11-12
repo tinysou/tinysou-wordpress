@@ -106,8 +106,6 @@ class TinysouPlugin {
 			$this->check_api_authorized();
 			
 
-			update_option( 'tinysou_searchable_num', $this->get_tinysou_posts_num() );
-
 			if( ! $this->api_authorized )
 				return;
 
@@ -117,6 +115,7 @@ class TinysouPlugin {
 			$this->error = $this->check_engine_initialized();
 			if( ! $this->engine_initialized )
 				return;
+			update_option( 'tinysou_searchable_num', $this->get_tinysou_posts_num() );
 		}
 	}
 
@@ -226,6 +225,7 @@ class TinysouPlugin {
 
 		try {
 			$this->initialize_engine( $engine_name );
+			update_option('tinysou_engine_intialized',true);
 		} catch (TinysouError $e ) {
 			$error_message = json_decode( $e->getMessage() );
 			return "<b>Engine 配置失败，微搜索服务器发生故障。</b>错误原因：". $error_message->message;
