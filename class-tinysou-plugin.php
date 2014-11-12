@@ -100,20 +100,35 @@ class TinysouPlugin {
 			}
 		}
 
+<<<<<<< HEAD
 		if ( current_user_can( 'edit_post', '' ) ) {
 			// add_action( 'save_post', array( $this, 'handle_save_post' ), 99, 1);
 			// add_action( 'transition_post_status', array( $this, 'handle_transition_post_status'), 99, 3 );
 			// add_action( 'trashed_post', array( $this, 'delete_post') );
+=======
+		if ( current_user_can( 'edit_post' ) ) {
+			add_action( 'save_post', array( $this, 'handle_save_post' ), 99, 1);
+			add_action( 'transition_post_status', array( $this, 'handle_transition_post_status'), 99, 3 );
+			add_action( 'trashed_post', array( $this, 'delete_post') );
+>>>>>>> 59efb41b04e683c12c3426d4e7e700eb9503dfe7
 
 			$this->initialize_api_client();
 			$this->check_api_authorized();
 			
+<<<<<<< HEAD
 			// update_option( 'tinysou_searchable_num', $this->get_tinysou_posts_num() );
+=======
+			update_option( 'tinysou_searchable_num', $this->get_tinysou_posts_num() );
+>>>>>>> 59efb41b04e683c12c3426d4e7e700eb9503dfe7
 
 			if( ! $this->api_authorized )
 				return;
 
+<<<<<<< HEAD
 			// $this->num_indexed_documents = get_option( 'tinysou_num_indexed_documents' );
+=======
+			$this->num_indexed_documents = get_option( 'tinysou_num_indexed_documents' );
+>>>>>>> 59efb41b04e683c12c3426d4e7e700eb9503dfe7
 			$this->engine_name = get_option( 'tinysou_engine_name' );
 			$this->engine_key = get_option( 'tinysou_engine_key' );
 			$this->engine_initialized = get_option( 'tinysou_engine_intialized' );
@@ -239,7 +254,11 @@ class TinysouPlugin {
 		$engine = $this->client->create_engine( array( 'name' => $engine_name ) );
 		$this->engine_name = $engine['name'];
 		$this->engine_key = $engine['key'];
+<<<<<<< HEAD
 		error_log("sss");
+=======
+
+>>>>>>> 59efb41b04e683c12c3426d4e7e700eb9503dfe7
 		$collection = $this->client->create_collection( $this->engine_name, $this->collection_name );
 		if( $collection ) {
 			$this->engine_initialized = true;

@@ -18,7 +18,11 @@
 						<ul>
 							<li>
 								<label>Engine 名称:</label>
+<<<<<<< HEAD
 								<input type="text" name="engine_name" class="regular-text" placeholder="engine name 至少两个字符且必须是英文字符" />
+=======
+								<input type="text" name="engine_name" class="regular-text" placeholder="engine name" />
+>>>>>>> 59efb41b04e683c12c3426d4e7e700eb9503dfe7
 								<span class="description">示例 Wordpress Site Search</span>
 							</li>
 							<br/>

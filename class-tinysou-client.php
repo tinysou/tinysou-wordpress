@@ -43,8 +43,12 @@ class TinysouClient {
 	* @return array The engine that was created
 	*/
 	public function create_engine( $params ) {
+<<<<<<< HEAD
 		$engine = $params;//array( 'name' => $params );
 		// print_r($params);
+=======
+		$engine = $params;//array( 'engine' => $params );
+>>>>>>> 59efb41b04e683c12c3426d4e7e700eb9503dfe7
 		$url = $this->endpoint . "engines";
 		$response = $this->call_api( 'POST', $url, $engine );
 		return json_decode( $response['body'], true );
@@ -130,6 +134,10 @@ class TinysouClient {
 		} 
 
 		$response = wp_remote_request( $url, $args );
+<<<<<<< HEAD
+=======
+
+>>>>>>> 59efb41b04e683c12c3426d4e7e700eb9503dfe7
 		if( ! is_wp_error( $response ) ) {
 			$response_code = wp_remote_retrieve_response_code( $response );
 			$response_message = wp_remote_retrieve_response_message( $response );
