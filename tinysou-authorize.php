@@ -12,7 +12,7 @@
 			<tbody>
 				<tr>
 					<td>
-						感谢使用为搜索插件，请在下面输入您的appid
+						感谢使用微搜索插件，请在下面输入您的Auth Token
 						<ul>
 							<li>
 								<label>Tinysou API Key:</label>
